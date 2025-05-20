@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,10 +10,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] LayerMask wallLayer;
     [SerializeField] float wallCheckDistance = 0.5f;
     [SerializeField] float safetyMargin = 0.05f; // Small buffer distance from walls
-
-    // Store recent wall collisions to prevent moving into them
-    private Dictionary<string, float> recentWallCollisions = new Dictionary<string, float>();
-    private float wallCollisionCooldown = 0.5f; // Time to remember wall collisions
 
     Vector2 moveDirection;
     public Vector2 MoveDirection { get { return moveDirection; } private set { moveDirection = value; } }
@@ -45,22 +39,6 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // Create a copy of the keys to iterate over
-        string[] wallIds = recentWallCollisions.Keys.ToArray();
-
-        // Update recent wall collision timers
-        List<string> expiredCollisions = new List<string>();
-        foreach (var wallId in wallIds)
-        {
-            recentWallCollisions[wallId] -= Time.deltaTime;
-            if (recentWallCollisions[wallId] <= 0)
-                expiredCollisions.Add(wallId);
-        }
-
-        // Clean up expired wall collisions
-        foreach (var wallId in expiredCollisions)
-            recentWallCollisions.Remove(wallId);
-
         // Emergency resolution if we're inside a wall
         bool wasOverlapping = false;
         Collider2D overlapCollider = null;
@@ -72,11 +50,6 @@ public class PlayerMovement : MonoBehaviour
                 Debug.LogWarning($"Player inside wall: {overlapCollider.name}. Attempting to resolve.");
                 hasLoggedWallIssue = true;
             }
-
-            // Remember this wall to avoid it
-            string wallId = overlapCollider.GetInstanceID().ToString();
-            if (!recentWallCollisions.ContainsKey(wallId))
-                recentWallCollisions.Add(wallId, wallCollisionCooldown);
 
             // Try to resolve the overlap
             ResolveWallOverlap(overlapCollider);
@@ -118,7 +91,7 @@ public class PlayerMovement : MonoBehaviour
         filter.SetLayerMask(wallLayer);
         filter.useTriggers = false;
 
-        List<Collider2D> results = new List<Collider2D>();
+        var results = new System.Collections.Generic.List<Collider2D>();
         Physics2D.OverlapCollider(playerCollider, filter, results);
 
         // Return true if we're overlapping with any wall
@@ -153,21 +126,14 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Calculate how much to move
-        // Distance from player to closest point on wall
         float currentDistance = Vector2.Distance(playerPosition, closestPointOnWall);
-
-        // Player radius (use the smaller of width/height for conservative estimate)
         float playerRadius = Mathf.Min(playerCollider.bounds.extents.x, playerCollider.bounds.extents.y);
-
-        // Calculate how far to push out (should be at least the player's radius)
         float pushDistance = (playerRadius - currentDistance) + safetyMargin;
 
         // Only push if we need to
         if (pushDistance > 0)
         {
-            // Move player out of the wall
             transform.position = playerPosition + (awayFromWall * pushDistance);
-
             Debug.Log($"Resolved wall overlap: moved {pushDistance} units in direction {awayFromWall}");
         }
 
@@ -229,10 +195,8 @@ public class PlayerMovement : MonoBehaviour
 
         if (input != Vector2.zero && (input + lastMoveDirection) != Vector2.zero)
         {
-            // Calculate the position this input would lead to
             Vector2 nextPosition = CalculateNextPosition(input);
 
-            // Check if this direction is valid (no wall ahead AND no collision at next position)
             if (!WallAhead(input) && !WillPositionIntersectWall(nextPosition))
             {
                 moveDirection = input;
@@ -248,19 +212,13 @@ public class PlayerMovement : MonoBehaviour
     bool WallAhead(Vector2 direction)
     {
         // First check with a raycast from slightly behind the player
-        Vector2 origin = (Vector2)transform.position - (direction * 0.1f); // Start slightly behind to catch walls we're close to
+        Vector2 origin = (Vector2)transform.position - (direction * 0.1f);
         RaycastHit2D hit = Physics2D.Raycast(origin, direction, wallCheckDistance + 0.1f, wallLayer);
 
-        // Debug ray
         Debug.DrawRay(origin, direction * (wallCheckDistance + 0.1f), hit.collider != null ? Color.red : Color.green, 0.1f);
 
         if (hit.collider != null && hit.collider.CompareTag("Wall"))
         {
-            // Remember this wall
-            string wallId = hit.collider.GetInstanceID().ToString();
-            if (!recentWallCollisions.ContainsKey(wallId))
-                recentWallCollisions.Add(wallId, wallCollisionCooldown);
-
             return true;
         }
 
@@ -279,16 +237,12 @@ public class PlayerMovement : MonoBehaviour
 
         if (hit.collider != null && hit.collider.CompareTag("Wall"))
         {
-            // Remember this wall
-            string wallId = hit.collider.GetInstanceID().ToString();
-            if (!recentWallCollisions.ContainsKey(wallId))
-                recentWallCollisions.Add(wallId, wallCollisionCooldown);
-
             return true;
         }
 
         return false;
     }
+
     Vector2 CalculateNextPosition(Vector2 direction)
     {
         Vector2 currentPosition = transform.position;
@@ -302,7 +256,6 @@ public class PlayerMovement : MonoBehaviour
         Vector2 rightPerp = new Vector2(-moveDirection.y, moveDirection.x);
         Vector2 leftPerp = new Vector2(moveDirection.y, -moveDirection.x);
 
-        // Check both perpendicular directions
         bool rightClear = !WallAhead(rightPerp) && !WillPositionIntersectWall(CalculateNextPosition(rightPerp));
         bool leftClear = !WallAhead(leftPerp) && !WillPositionIntersectWall(CalculateNextPosition(leftPerp));
 
@@ -320,7 +273,6 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            // Try opposite direction as last resort
             Vector2 opposite = -moveDirection;
             if (!WallAhead(opposite) && !WillPositionIntersectWall(CalculateNextPosition(opposite)))
             {
@@ -330,7 +282,6 @@ public class PlayerMovement : MonoBehaviour
             }
             else
             {
-                // All directions are blocked, don't move
                 Debug.Log("Surrounded by walls, cannot move!");
             }
         }
@@ -338,8 +289,6 @@ public class PlayerMovement : MonoBehaviour
 
     public void ChangeDirection(Vector2 newDirection)
     {
-        //ProcessMovement(newDirection);
-
         Vector2 nextPosition = CalculateNextPosition(newDirection);
 
         if (!WallAhead(newDirection) && !WillPositionIntersectWall(nextPosition))
@@ -360,7 +309,6 @@ public class PlayerMovement : MonoBehaviour
         Vector2 movement = moveDirection * moveSpeed * Time.deltaTime;
         Vector2 newPosition = currentPosition + movement;
 
-        // Final safety check to prevent moving into walls
         if (!WillPositionIntersectWall(newPosition))
         {
             transform.position = newPosition;
@@ -377,7 +325,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if (playerCollider == null) return false;
 
-        // Use overlap circle with slightly smaller radius for collision prediction
         float radius = Mathf.Min(playerCollider.bounds.extents.x, playerCollider.bounds.extents.y) * 0.9f;
         Collider2D[] colliders = Physics2D.OverlapCircleAll(position, radius, wallLayer);
 
@@ -385,67 +332,11 @@ public class PlayerMovement : MonoBehaviour
         {
             if (collider.CompareTag("Wall"))
             {
-                string wallId = collider.GetInstanceID().ToString();
-                if (!recentWallCollisions.ContainsKey(wallId))
-                    recentWallCollisions.Add(wallId, wallCollisionCooldown);
-
                 return true;
             }
-        }
-
-        // Check against recently collided walls for extra safety
-        foreach (var wallId in recentWallCollisions.Keys)
-        {
-            Collider2D wallCollider = GetColliderFromInstanceID(wallId);
-            if (wallCollider != null && WillCollideWithWall(position, wallCollider))
-                return true;
         }
 
         return false;
-    }
-
-    Collider2D GetColliderFromInstanceID(string instanceId)
-    {
-        int id;
-        if (int.TryParse(instanceId, out id))
-        {
-            // Instead of using FindObjectFromInstanceID, we'll use a different approach
-            // to find the collider by tag and compare its instance ID
-            Collider2D[] wallColliders = GameObject.FindGameObjectsWithTag("Wall")
-                .Select(wall => wall.GetComponent<Collider2D>())
-                .Where(collider => collider != null)
-                .ToArray();
-
-            foreach (Collider2D collider in wallColliders)
-            {
-                if (collider.GetInstanceID().ToString() == instanceId)
-                    return collider;
-            }
-        }
-        return null;
-    }
-
-    bool WillCollideWithWall(Vector2 position, Collider2D wallCollider)
-    {
-        // Special check for specific wall we've recently collided with
-        if (playerCollider == null || wallCollider == null) return false;
-
-        bool result = false;
-
-        try
-        {
-            // Use a simple distance check as fallback
-            float distance = Vector2.Distance(position, wallCollider.bounds.ClosestPoint(position));
-            float minDistance = playerCollider.bounds.extents.magnitude * 0.9f;
-            result = distance < minDistance;
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"Error checking wall collision: {e.Message}");
-            result = false;
-        }
-
-        return result;
     }
 
     void OnZoomIn(InputValue value)
@@ -497,41 +388,31 @@ public class PlayerMovement : MonoBehaviour
                 canBoost = true;
             }
         }
-
     }
+
     void Boost()
     {
-        // Implement boost logic here
         Debug.Log("Boost activated!");
         moveSpeed *= boostModifier;
         boostDuration -= Time.deltaTime;
     }
 
-    // Called when this object collides with a wall
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Wall"))
         {
-            // Remember this wall to avoid it
-            string wallId = collision.collider.GetInstanceID().ToString();
-            if (!recentWallCollisions.ContainsKey(wallId))
-                recentWallCollisions.Add(wallId, wallCollisionCooldown);
-
             Debug.Log($"Detected wall collision in OnCollisionEnter2D: {collision.collider.name}");
         }
     }
 
-    // Draw gizmos to help visualize collision detection
     void OnDrawGizmos()
     {
         if (playerCollider == null) return;
 
-        // Draw the player's collision radius
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position,
             Mathf.Min(playerCollider.bounds.extents.x, playerCollider.bounds.extents.y) * 0.9f);
 
-        // Draw wall check rays in all four directions
         Gizmos.color = Color.cyan;
         Vector2[] directions = { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
         foreach (Vector2 dir in directions)
