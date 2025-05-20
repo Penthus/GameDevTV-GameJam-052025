@@ -1,0 +1,17 @@
+Design Docs - GameDev Snake style game
+
+Multiplayer? If not time to impliment then fixed time highscore style
+
+AI? Random AI enemies - give various sizes (longer growth timers) - Done - Same growth as player at the moment
+
+Food acts as power ups (increase size, temp speed, invul)
+
+Larger enemies has Red Outline, Smaller has Green, Same size is Red - Done
+
+Arrow pointing to other offscreen players/AI (say closest 5 with arrow scaling based on distance)
+
+Shift for boost (gauge for boost that fills up over time) AI gets reduced boost - Player boost added - No gui element yet
+
+Different zoom levels (Change pixel perfect camera's Assets pixels per unit value) - DONE
+
+Add Walls the perimeter
