@@ -22,12 +22,18 @@ public class PlayerMovement : MonoBehaviour
 
     // For visual debugging
     private bool hasLoggedWallIssue = false;
+    private BoostUI boostUI;
 
     void Start()
     {
         moveDirection = Vector2.up;
         lastMoveDirection = Vector2.up;
         playerCollider = GetComponent<Collider2D>();
+        boostUI = FindFirstObjectByType<BoostUI>();
+        if (boostUI == null)
+        {
+            Debug.LogWarning("BoostUI not found in the scene. Boost UI will not be updated.");
+        }
 
         // If no wall layer is set, use default
         if (wallLayer.value == 0)
@@ -170,14 +176,6 @@ public class PlayerMovement : MonoBehaviour
 
         // If still stuck, try a larger push opposite to current direction
         transform.position = (Vector2)transform.position - moveDirection * pushDistance * 2;
-    }
-
-    private void RegenerateBoost()
-    {
-        if (!isBoost && boostDuration < maxBoostDuration)
-        {
-            boostDuration += Time.deltaTime;
-        }
     }
 
     void OnMove(InputValue value)
@@ -380,11 +378,11 @@ public class PlayerMovement : MonoBehaviour
         if (isBoost)
         {
             boostDuration -= Time.deltaTime;
+            boostUI.SetBoost(boostDuration / maxBoostDuration);
             if (boostDuration <= 0)
             {
                 isBoost = false;
                 moveSpeed /= boostModifier;
-                Debug.Log("Boost ended!");
                 canBoost = true;
             }
         }
@@ -392,33 +390,16 @@ public class PlayerMovement : MonoBehaviour
 
     void Boost()
     {
-        Debug.Log("Boost activated!");
         moveSpeed *= boostModifier;
         boostDuration -= Time.deltaTime;
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    private void RegenerateBoost()
     {
-        if (collision.gameObject.CompareTag("Wall"))
+        if (!isBoost && boostDuration < maxBoostDuration)
         {
-            Debug.Log($"Detected wall collision in OnCollisionEnter2D: {collision.collider.name}");
-        }
-    }
-
-    void OnDrawGizmos()
-    {
-        if (playerCollider == null) return;
-
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position,
-            Mathf.Min(playerCollider.bounds.extents.x, playerCollider.bounds.extents.y) * 0.9f);
-
-        Gizmos.color = Color.cyan;
-        Vector2[] directions = { Vector2.up, Vector2.right, Vector2.down, Vector2.left };
-        foreach (Vector2 dir in directions)
-        {
-            Vector2 origin = (Vector2)transform.position - (dir * 0.1f);
-            Gizmos.DrawLine(origin, origin + dir * (wallCheckDistance + 0.1f));
+            boostDuration += Time.deltaTime;
+            boostUI.SetBoost(boostDuration / maxBoostDuration);
         }
     }
 }

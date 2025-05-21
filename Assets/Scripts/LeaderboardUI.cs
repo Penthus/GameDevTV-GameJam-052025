@@ -72,7 +72,7 @@ public class LeaderboardUI : MonoBehaviour
         {
             var entry = Instantiate(entryPrefab, entryContainer);
             entry.gameObject.SetActive(true);
-            entry.text = $"{player.rank} - {player.size} - {player.prefix} {player.name}";
+            entry.text = $"#{player.rank} - Size: {player.size} - Name: {player.prefix} {player.name}";
         }
     }
 
