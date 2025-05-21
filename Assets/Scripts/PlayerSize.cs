@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class PlayerSize : MonoBehaviour
 {
+    [SerializeField] int minSizeAI = 1;
+    [SerializeField] int maxSizeAI = 5;
+
     public int playerName = 1;
     public int playerSize = 1;
-
+    
     float scoreTimer = 0f;
     float scoreInterval = 5f;
+
 
     LeaderboardUI leaderboardUI; 
     void Start()
@@ -20,13 +24,16 @@ public class PlayerSize : MonoBehaviour
             Debug.LogError("LeaderboardUI instance not found in the scene.");            
         }
 
-        transform.localScale = new Vector3(playerSize, playerSize, 1f);
-
-        // Set the AI to have a longer score interval
+        // Set the AI to have a longer score interval and random size
         if (gameObject.CompareTag("Enemy"))
         {
             scoreInterval = 10f;
+            playerSize = UnityEngine.Random.Range(minSizeAI, maxSizeAI + 1);
         }
+
+        transform.localScale = new Vector3(playerSize, playerSize, 1f);
+
+
     }
 
     void Update()

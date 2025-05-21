@@ -214,6 +214,11 @@ MonoBehaviour:
   moveSpeed: 1
   boostModifier: 2
   maxBoostDuration: 2
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  wallCheckDistance: 0.5
+  safetyMargin: 0.05
 --- !u!114 &1251443241791341039
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,7 +231,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f12121337a1beb040a61b7338c2e23f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerNumber: 1
+  minSizeAI: 1
+  maxSizeAI: 5
+  playerName: 0
   playerSize: 2
 --- !u!114 &1048487682585996002
 MonoBehaviour:

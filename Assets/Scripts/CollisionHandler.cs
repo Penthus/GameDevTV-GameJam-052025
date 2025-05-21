@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class CollisionHandler : MonoBehaviour
@@ -99,13 +100,14 @@ public class CollisionHandler : MonoBehaviour
 
                 if (playerSize.playerSize > otherPlayerSize.playerSize)
                 {                    
-                    playerSize.IncreaseSize(otherPlayerSize.playerSize);
+                    playerSize.IncreaseSize(2);
                     Debug.Log("Player got eaten by larger enemy AI.");
-                    Destroy(other.gameObject);
+                    FindFirstObjectByType<GameManager>().GetPlayerStats(otherPlayerSize);
+                    //Destroy(other.gameObject);
                 }
                 else
                 {
-                    otherPlayerSize.IncreaseSize(playerSize.playerSize);
+                    otherPlayerSize.IncreaseSize(2);
                     Debug.Log("Enemy got eaten by larger Player.");
                     Destroy(this.gameObject);
                 }

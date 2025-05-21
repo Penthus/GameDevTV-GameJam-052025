@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &6212989306202783794
+--- !u!1001 &7847532404438852006
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -11,26 +11,26 @@ PrefabInstance:
     - target: {fileID: 3116150137599038701, guid: 1a0b19f808e0ca142a769c0771972233, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: c39a24f7ef995014f9e158b5dc27201b, type: 3}
-    - target: {fileID: 3116150137599038701, guid: 1a0b19f808e0ca142a769c0771972233, type: 3}
-      propertyPath: m_WasSpriteAssigned
-      value: 1
+      objectReference: {fileID: 21300000, guid: 5c2f97531207a2e4ebe26f9d7fcb5e3e, type: 3}
+    - target: {fileID: 3464946194172381590, guid: 1a0b19f808e0ca142a769c0771972233, type: 3}
+      propertyPath: maxSizeAI
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3464946194172381590, guid: 1a0b19f808e0ca142a769c0771972233, type: 3}
       propertyPath: playerSize
-      value: 20
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3464946194172381590, guid: 1a0b19f808e0ca142a769c0771972233, type: 3}
       propertyPath: playerNumber
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6737548618456520816, guid: 1a0b19f808e0ca142a769c0771972233, type: 3}
-      propertyPath: m_LocalPosition.x
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6737548618456520816, guid: 1a0b19f808e0ca142a769c0771972233, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -16
+      objectReference: {fileID: 0}
+    - target: {fileID: 6737548618456520816, guid: 1a0b19f808e0ca142a769c0771972233, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -12
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6737548618456520816, guid: 1a0b19f808e0ca142a769c0771972233, type: 3}
       propertyPath: m_LocalPosition.z
@@ -66,15 +66,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6768690369342056808, guid: 1a0b19f808e0ca142a769c0771972233, type: 3}
       propertyPath: m_Name
-      value: Enemy Green
-      objectReference: {fileID: 0}
-    - target: {fileID: 7506432015676301449, guid: 1a0b19f808e0ca142a769c0771972233, type: 3}
-      propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 0.0625
-      objectReference: {fileID: 0}
-    - target: {fileID: 7506432015676301449, guid: 1a0b19f808e0ca142a769c0771972233, type: 3}
-      propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 0.0625
+      value: Enemy Pink
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

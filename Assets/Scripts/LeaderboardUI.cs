@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class LeaderboardUI : MonoBehaviour
 {
-
+    public TMP_Text header; // Prefab for the leaderboard Header
     public TMP_Text entryPrefab; // Prefab for the leaderboard entry
     public Transform entryContainer; // Container for the leaderboard entries
 
@@ -18,11 +18,11 @@ public class LeaderboardUI : MonoBehaviour
         public int size;
     }
 
-    void Start()
+    public void BuildLeaderboard()
     {
         leaderboardEntries.Clear();
         int playerCount = 1;
-        int enemyCount = 1; 
+        int enemyCount = 1;
 
         foreach (var go in GameObject.FindGameObjectsWithTag("Player"))
         {
@@ -63,13 +63,15 @@ public class LeaderboardUI : MonoBehaviour
         // Clear old entries
         foreach (Transform child in entryContainer)
         {
-            if (child != entryPrefab.transform) // Keep the header
+            if (child != header.transform) // Keep the header
                 Destroy(child.gameObject);
         }
 
-        // Populate entries
-        foreach (var player in players)
+        // Only display the top 5 entries
+        int displayCount = Mathf.Min(5, players.Count);
+        for (int i = 0; i < displayCount; i++)
         {
+            var player = players[i];
             var entry = Instantiate(entryPrefab, entryContainer);
             entry.gameObject.SetActive(true);
             entry.text = $"#{player.rank} - Size: {player.size} - Name: {player.prefix} {player.name}";
@@ -99,4 +101,18 @@ public class LeaderboardUI : MonoBehaviour
             entries[i].rank = i + 1;
         }
     }
+
+    public int GetRank()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        foreach (var entry in leaderboardEntries)
+        {
+            if (entry.name == player.GetComponent<PlayerSize>().playerName.ToString())
+            {
+                return entry.rank;
+            }
+        }
+        return -1; // Not found
+    }
 }
+

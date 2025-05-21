@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &396323457129541336
+--- !u!1001 &6435804374474990710
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -11,22 +11,22 @@ PrefabInstance:
     - target: {fileID: 3116150137599038701, guid: 1a0b19f808e0ca142a769c0771972233, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 2582169da69336e4aa98ff7d1049ee5b, type: 3}
+      objectReference: {fileID: 21300000, guid: 02ceaafed23e3ff408992a141fa7458a, type: 3}
     - target: {fileID: 3464946194172381590, guid: 1a0b19f808e0ca142a769c0771972233, type: 3}
-      propertyPath: playerSize
-      value: 10
+      propertyPath: maxSizeAI
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 3464946194172381590, guid: 1a0b19f808e0ca142a769c0771972233, type: 3}
-      propertyPath: playerNumber
-      value: 4
+      propertyPath: minSizeAI
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 6737548618456520816, guid: 1a0b19f808e0ca142a769c0771972233, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6737548618456520816, guid: 1a0b19f808e0ca142a769c0771972233, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6737548618456520816, guid: 1a0b19f808e0ca142a769c0771972233, type: 3}
       propertyPath: m_LocalPosition.z
@@ -62,7 +62,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6768690369342056808, guid: 1a0b19f808e0ca142a769c0771972233, type: 3}
       propertyPath: m_Name
-      value: Enemy Cyan
+      value: Enemy Yellow
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

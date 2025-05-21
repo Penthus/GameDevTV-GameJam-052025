@@ -237,7 +237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f12121337a1beb040a61b7338c2e23f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerNumber: 2
+  playerName: 1
   playerSize: 4
 --- !u!114 &6204964613535303854
 MonoBehaviour:
@@ -253,6 +253,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minChangeInterval: 1
   maxChangeInterval: 4
+  wallCheckDistance: 0.5
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!114 &-9219540993591545980
 MonoBehaviour:
   m_ObjectHideFlags: 0
