@@ -1,4 +1,6 @@
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -25,10 +27,12 @@ public class GameManager : MonoBehaviour
     public float minYRange = -5f;
     public float maxYRange = 5f;
 
+    public float minPlayerSpawnExclusionDistance = .5f;
+
     public int playerDeathSize = 1;
     public int playerDeathRank = 100;
 
-    
+
 
     void Start()
     {
@@ -48,14 +52,14 @@ public class GameManager : MonoBehaviour
 
     private void ResetGameState()
     {
-        Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
-
+        List<Vector3> enemyPositions = new List<Vector3>();
         for (int i = 0; i < enemyCount; i++)
         {
             int randomIndex = UnityEngine.Random.Range(0, enemyPrefabs.Length);
             GameObject enemyPrefab = enemyPrefabs[randomIndex];
             Vector3 spawnPosition = new Vector3(UnityEngine.Random.Range(minXRange, maxXRange), UnityEngine.Random.Range(minYRange, maxYRange), 0f);
             GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+            enemyPositions.Add(spawnPosition);
 
             var playerSize = enemy.GetComponent<PlayerSize>();
             if (playerSize != null)
@@ -67,6 +71,41 @@ public class GameManager : MonoBehaviour
                 Debug.LogError("PlayerSize component not found on enemy prefab.");
             }
         }
+
+        Vector3 playerSpawn = Vector3.zero;
+        bool found = false;
+        int maxAttempts = 100;
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
+        {
+
+            Vector3 potentialSpawnLocation = new Vector3(
+                UnityEngine.Random.Range(minXRange, maxXRange),
+                UnityEngine.Random.Range(minYRange, maxYRange), 0f);
+
+            bool tooClose = false;
+
+            foreach (Vector3 enemyPosition in enemyPositions)
+            {
+                if (Vector3.Distance(playerSpawn, enemyPosition) < minPlayerSpawnExclusionDistance)
+                {
+                    tooClose = true;
+                    break;
+                }
+            }
+            if (!tooClose)
+            {
+                playerSpawn = potentialSpawnLocation;
+                found = true;
+                break;
+            }
+            if (!found)
+            {
+                Debug.LogWarning("Could not find a suitable spawn location for the player after "
+                    + maxAttempts + " attempts.");
+                playerSpawn = Vector3.zero;
+            }
+        }
+        Instantiate(playerPrefab, playerSpawn, Quaternion.identity);
 
         // Reset leaderboard UI
         leaderboardUI.BuildLeaderboard();
@@ -113,7 +152,8 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
-    public void GetPlayerStats(PlayerSize playerSize) {
+    public void GetPlayerStats(PlayerSize playerSize)
+    {
         float timeRemaining = FindFirstObjectByType<TimerUI>().TimeRemaining;
         float gameTime = FindFirstObjectByType<TimerUI>().GameTime;
         playerDeathSize = playerSize.playerSize;

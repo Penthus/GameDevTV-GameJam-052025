@@ -352,7 +352,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb254d74cfa7cc04ebe3c3c34ed5a2ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameTime: 10
+  gameTime: 180
   mainMenuPanel: {fileID: 937150472}
   gameUIPanel: {fileID: 1972710012}
   gameOverPanel: {fileID: 914373464}
@@ -372,6 +372,7 @@ MonoBehaviour:
   maxXRange: 25
   minYRange: -25
   maxYRange: 25
+  minPlayerSpawnExclusionDistance: 0.5
   playerDeathSize: 1
   playerDeathRank: 100
 --- !u!4 &769614615
