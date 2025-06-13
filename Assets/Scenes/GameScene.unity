@@ -984,7 +984,7 @@ PrefabInstance:
     - target: {fileID: 3407254152715496497, guid: 5c16b9eb4d5320d48b279c0efe726fe2, type: 3}
       propertyPath: m_text
       value: "Welcome to my game, you start as a small character in a world filled
-        with large preditors. \n\nThe objective is to avoid danger and grow by eating
+        with large predators. \n\nThe objective is to avoid danger and grow by eating
         those smaller than you. You have 3 minutes to get as big as possible."
       objectReference: {fileID: 0}
     - target: {fileID: 3407254152715496497, guid: 5c16b9eb4d5320d48b279c0efe726fe2, type: 3}
